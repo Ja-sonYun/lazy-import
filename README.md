@@ -46,7 +46,7 @@ with lazy_import():
 ...
 ```
 User will be imported when the `__call__` or `__getattr__` methods are called.  
-This example codes are implemented in the tests folder. See `tests/test_user.py` and `tests/test_company.py`.
+This example codes are implemented in the tests folder. See [`tests/test_user.py`](https://github.com/Ja-sonYun/lazy-import/blob/main/tests/test_user.py) and [`tests/test_company.py`](https://github.com/Ja-sonYun/lazy-import/blob/main/tests/test_company.py).
 
 #### NOTE
 - Keep in mind that the class of lazy imported is not the same class with your original `User` class. It is wrapped by another class inside of `lazy_import()`.
