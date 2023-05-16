@@ -1,5 +1,12 @@
 # Lazy Import
 
+### Installation
+```
+pip install lz-import
+# Or
+poetry add lz-import
+```
+
 ### Usage
 ```python
 # File: company.py
