@@ -23,7 +23,7 @@ print("imported!")
 ```python
 from lazy_import import lazy_import
 with lazy_import():
-    from file_takes_long_time_to_import import Module  # Not imported
+    from file_takes_long_time_to_import import Module  # Not imported yet
 
 def run():
     Module()
@@ -32,12 +32,16 @@ run()  # Now Module is imported.
 # print imported!
 ```
 Module will be imported when the `__call__` or `__getattr__` methods are called.
+See [`tests/test_load_later.py`](https://github.com/Ja-sonYun/lazy-import/blob/main/tests/test_load_later.py)
 
 
 ### Usage 2
 ```python
 # File: company.py
-from user import User
+from lazy_import import lazy_import
+
+with lazy_import():
+    from user import User
 
 class Company:
     name = "company"
@@ -49,7 +53,10 @@ class Company:
 
 ```python
 # File: user.py
-from company import Company
+from lazy_import import lazy_import
+
+with lazy_import():
+    from company import Company
 
 class User:
     name = "user"
@@ -61,22 +68,12 @@ if __name__ == "__main__":
     company = User.get_company()
 ```
 
-This file layout will throw a circular import error, but if we can do a lazy import, it's perfectly fine. Just wrap the block of code like follow snippets.
-```python
-from lazy_import import lazy_import
-
-with lazy_import():
-    from user import User
-
-...
-```
 User will be imported when the `__call__` or `__getattr__` methods are called.  
 This example codes are implemented in the tests folder. See [`tests/test_user.py`](https://github.com/Ja-sonYun/lazy-import/blob/main/tests/test_user.py) and [`tests/test_company.py`](https://github.com/Ja-sonYun/lazy-import/blob/main/tests/test_company.py).
 
 #### NOTE
 - Keep in mind that the class of lazy imported is not the same class with your original `User` class. It is wrapped by another class inside of `lazy_import()`.
 - Only work for module or class.
-- This library works with mypy.
 
 #### TODO
 This library currently doesn't support follow syntax:
