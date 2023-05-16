@@ -1,11 +1,14 @@
 [tool.poetry]
-name = "lazy-import"
+name = "lz-import"
 version = "0.1.0"
 description = ""
 authors = ["Ja-sonYun <killa30867@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "lazy_import"}]
+keywords = ["import", "lazy", "circular"]
+homepage = "https://github.com/Ja-sonYun/lazy_import"
+repository = "https://github.com/Ja-sonYun/lazy_import"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
