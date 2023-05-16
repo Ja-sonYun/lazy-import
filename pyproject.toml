@@ -1,0 +1,46 @@
+[tool.poetry]
+name = "lazy-import"
+version = "0.1.0"
+description = ""
+authors = ["Ja-sonYun <killa30867@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "lazy_import"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+pytest = "^7.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.lint.dependencies]
+pysen = "^0.10.3"
+mypy = "<1.0"
+black = "^23.1.0"
+isort = "^5.12.0"
+flake8 = "^4.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+tox = "^4.5.1"
+
+[tool.pysen]
+version = "0.10"
+
+[tool.pysen.lint]
+enable_black = true
+enable_flake8 = true
+enable_isort = true
+enable_mypy = true
+mypy_preset = "strict"
+line_length = 88
+py_version = "py39"
+[[tool.pysen.lint.mypy_targets]]
+  paths = ["."]
+
+[tool.pysen.lint.source]
+# includes = ["."]
+excludes = [".venv", ".tox"]
