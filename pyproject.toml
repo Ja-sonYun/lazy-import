@@ -12,7 +12,6 @@ repository = "https://github.com/Ja-sonYun/lazy_import"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.12"
-pytest = "^7.3.1"
 
 
 [build-system]
