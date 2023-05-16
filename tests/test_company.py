@@ -16,4 +16,5 @@ def test_get_user() -> None:
     assert company.name == "company"
     assert company.get_user().name == "user"
 
+
 print("Imported!!")

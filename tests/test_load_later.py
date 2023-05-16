@@ -7,6 +7,7 @@ with lazy_import():
 def test_heavy_lib_init() -> None:
     print("loaded")
     from time import sleep
+
     sleep(2)
     print("Use heavy lib")
     assert HeavyLib().value == 0

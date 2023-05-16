@@ -3,6 +3,7 @@ import sys
 from contextlib import contextmanager
 from dis import Bytecode, Instruction
 from enum import IntEnum
+from types import FrameType
 from typing import Any, Generator, Optional
 
 LAZY_IMPORT = "lazy_import"
@@ -116,7 +117,7 @@ def lazy_import() -> Generator[None, None, None]:
     return None
 
 
-def _map_lazy_importer(import_frame) -> None:
+def _map_lazy_importer(import_frame: FrameType) -> None:
     disassembled = Bytecode(import_frame.f_code)
     import_later = _find_what_to_imports(disassembled)
 
