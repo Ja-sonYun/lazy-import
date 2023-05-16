@@ -66,44 +66,71 @@ def lazy_import() -> Generator[None, None, None]:
     Also work with mypy, due to the fact that mypy doesn't check the exception in the
     contextmanager block.
     """
+    backed_up_sys_path = sys.path.copy()
+
     try:
+        # Make sys.path empty to raise import error
+        # Remove all path, and cached import
+        sys.path = ["__lazy_importing__"]
+
         yield
+        # yield should raise import error
+
     except ImportError as err:
-        if "circular import" not in err.msg:
-            raise err
+        if "circular import" in err.msg:
+            *_, traceback = sys.exc_info()
+            assert traceback is not None
+            # Digging into the traceback to find the module that is being imported
 
-        *_, traceback = sys.exc_info()
-        assert traceback is not None
-        # Digging into the traceback to find the module that is being imported
+            contextmanager_frame = traceback.tb_frame.f_back
 
-        contextmanager_frame = traceback.tb_frame.f_back
+            # Ensure that the frame is a contextmanager
+            # This block is after the yield, so it should be __exit__
+            if not (
+                contextmanager_frame
+                and contextmanager_frame.f_code.co_name == "__exit__"
+            ):
+                raise RuntimeError("This should not happen. ") from None
 
-        # Ensure that the frame is a contextmanager
-        # This block is after the yield, so it should be __exit__
-        if not (
-            contextmanager_frame and contextmanager_frame.f_code.co_name == "__exit__"
-        ):
-            raise RuntimeError("This should not happen. ") from None
+            # Now we need to grab the module that is being imported
+            # Go above one more frame
+            import_frame = contextmanager_frame.f_back
+            assert import_frame is not None
 
-        # Now we need to grab the module that is being imported
-        # Go above one more frame
-        import_frame = contextmanager_frame.f_back
-        assert import_frame is not None
+            return _map_lazy_importer(import_frame)
+        else:
+            sys.path = backed_up_sys_path
 
-        disassembled = Bytecode(import_frame.f_code)
-        import_later = _find_what_to_imports(disassembled)
+            *_, traceback = sys.exc_info()
+            assert traceback is not None
+            # Digging into the traceback to find the module that is being imported
 
-        for module_name, names in import_later:
-            for name in names:
-                import_frame.f_locals[name] = type(
-                    name,
-                    (_LazyImporter,),
-                    {
-                        "__module_name__": module_name,
-                        "__varname__": name,
-                        "__loaded__": None,
-                    },
-                )()
+            contextmanager_frame = traceback.tb_frame.f_back
+            assert contextmanager_frame is not None
+            import_frame = contextmanager_frame.f_back
+            assert import_frame is not None
+
+            return _map_lazy_importer(import_frame)
+
+    sys.path = backed_up_sys_path
+    return None
+
+
+def _map_lazy_importer(import_frame) -> None:
+    disassembled = Bytecode(import_frame.f_code)
+    import_later = _find_what_to_imports(disassembled)
+
+    for module_name, names in import_later:
+        for name in names:
+            import_frame.f_locals[name] = type(
+                name,
+                (_LazyImporter,),
+                {
+                    "__module_name__": module_name,
+                    "__varname__": name,
+                    "__loaded__": None,
+                },
+            )()
 
 
 def _find_what_to_imports(bytecode: Bytecode) -> list[tuple[str, list[str]]]:

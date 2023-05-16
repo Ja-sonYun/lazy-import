@@ -9,7 +9,32 @@ pip install lz-import
 poetry add lz-import
 ```
 
-### Usage
+### Usage 1
+```python
+# File: file_takes_long_time_to_import.py
+init = initializer()
+
+class Module:
+    ...
+
+print("imported!")
+```
+
+```python
+from lazy_import import lazy_import
+with lazy_import():
+    from file_takes_long_time_to_import import Module  # Not imported
+
+def run():
+    Module()
+
+run()  # Now Module is imported.
+# print imported!
+```
+Module will be imported when the `__call__` or `__getattr__` methods are called.
+
+
+### Usage 2
 ```python
 # File: company.py
 from user import User

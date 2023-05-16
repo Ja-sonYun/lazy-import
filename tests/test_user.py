@@ -14,3 +14,9 @@ class User:
 def test_get_company() -> None:
     user = User()
     assert user.get_company().name == "company"
+
+
+if __name__ == "__main__":
+    import time
+    time.sleep(2)
+    test_get_company()
